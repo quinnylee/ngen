@@ -288,13 +288,11 @@ endif()
 # -----------------------------------------------------------------------------
 # Configure whether Fortran BMI functionality is active
 if(NGEN_WITH_BMI_FORTRAN)
-    if(NOT NGEN_WITH_EXTERN_SUMMA) # SUMMA builds iso_c_fortran already
-        add_external_subdirectory(
-            SOURCE  "${NGEN_EXT_DIR}/iso_c_fortran_bmi"
-            OUTPUT  "${NGEN_EXT_DIR}/iso_c_fortran_bmi/cmake_build"
-            IMPORTS iso_c_bmi
-        )
-    endif()
+    add_external_subdirectory(
+        SOURCE  "${NGEN_EXT_DIR}/iso_c_fortran_bmi"
+        OUTPUT  "${NGEN_EXT_DIR}/iso_c_fortran_bmi/cmake_build"
+        IMPORTS iso_c_bmi
+    )
 
     if(NGEN_WITH_EXTERN_NOAH_OWP_MODULAR)
         add_external_subdirectory(
