@@ -80,6 +80,7 @@ cmake_dependent_option(NGEN_WITH_EXTERN_CFE              "Build with extern-dist
 cmake_dependent_option(NGEN_WITH_EXTERN_LGAR             "Build with extern-distributed LGAR"             ON "NGEN_WITH_BMI_C"       OFF)
 cmake_dependent_option(NGEN_WITH_EXTERN_PET              "Build with extern-distributed PET"              ON "NGEN_WITH_BMI_C"       OFF)
 cmake_dependent_option(NGEN_WITH_EXTERN_NOAH_OWP_MODULAR "Build with extern-distributed Noah-OWP-Modular" ON "NGEN_WITH_BMI_FORTRAN" OFF)
+cmake_dependent_option(NGEN_WITH_EXTERN_SUMMA            "Build with extern-distributed SUMMA"            ON "NGEN_WITH_BMI_FORTRAN" OFF)
 
 # Allow enabling of all extern models dependent on NGen options given.
 option(NGEN_WITH_EXTERN_ALL OFF)
@@ -101,6 +102,7 @@ if(NGEN_WITH_EXTERN_ALL)
     # Ensure Fortran support is enabled
     if(NGEN_WITH_BMI_FORTRAN)
         set(NGEN_WITH_EXTERN_NOAH_OWP_MODULAR ON)
+        set(NGEN_WITH_EXTERN_SUMMA ON)
     else()
         message(FATAL_ERROR "NGEN_WITH_EXTERN_ALL set to ${NGEN_WITH_EXTERN_ALL}, but NGEN_WITH_BMI_FORTRAN set to ${NGEN_WITH_BMI_FORTRAN}")
     endif()
@@ -300,6 +302,15 @@ if(NGEN_WITH_BMI_FORTRAN)
             IMPORTS    surfacebmi
         )
     endif()
+
+    if(NGEN_WITH_EXTERN_SUMMA)
+        add_external_subdirectory(
+            SOURCE     "${NGEN_EXT_DIR}/summa"
+            OUTPUT     "${NGEN_EXT_DIR}/summa/cmake_build"
+            GIT_UPDATE "${NGEN_EXT_DIR}/summa/summa"
+            IMPORTS    summaebmi
+        )
+    endif()
 endif()
 
 # -----------------------------------------------------------------------------
@@ -362,6 +373,10 @@ endif()
 
 if(NGEN_WITH_EXTERN_NOAH_OWP_MODULAR)
     add_dependencies(ngen surfacebmi)
+endif()
+
+if(NGEN_WITH_EXTERN_SUMMA)
+    add_dependencies(ngen summa)
 endif()
 
 target_include_directories(ngen PUBLIC "${NGEN_INC_DIR}")
@@ -483,6 +498,7 @@ ngen_multiline_message(
 "    NGEN_WITH_EXTERN_CFE: ${NGEN_WITH_EXTERN_CFE}"
 "    NGEN_WITH_EXTERN_PET: ${NGEN_WITH_EXTERN_PET}"
 "    NGEN_WITH_EXTERN_NOAH_OWP_MODULAR: ${NGEN_WITH_EXTERN_NOAH_OWP_MODULAR}"
+"    NGEN_WITH_EXTERN_SUMMA: ${NGEN_WITH_EXTERN_SUMMA}"
 "Environment summary:"
 "  Boost:"
 "    Version: ${Boost_VERSION}"
